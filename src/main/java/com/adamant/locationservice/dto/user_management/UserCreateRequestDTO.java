@@ -20,11 +20,14 @@ public class UserCreateRequestDTO {
     @JsonProperty("last_name")
     private String lastName;
 
-    @JsonProperty("avatar_url")
-    private String avatarUrl;
-
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("password")
+    private String password;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 
     private boolean activated;
 

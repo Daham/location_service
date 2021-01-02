@@ -2,12 +2,15 @@ package com.adamant.locationservice.controller;
 
 import com.adamant.locationservice.dto.user_management.*;
 import com.adamant.locationservice.entity.error_data.ErrorData;
+import com.adamant.locationservice.entity.user_management.Group;
+import com.adamant.locationservice.entity.user_management.Role;
+import com.adamant.locationservice.entity.user_management.User;
+import com.adamant.locationservice.service.UserManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import util.ApiSpecConstants;
+import util.ModelUtility;
 
 import javax.validation.Valid;
 
@@ -23,6 +27,8 @@ import javax.validation.Valid;
 @Validated
 @RequiredArgsConstructor
 public class UserManagementController {
+
+    private final UserManagementService userManagementService;
 
     @Operation(
             summary = "List all users",
@@ -42,9 +48,16 @@ public class UserManagementController {
             }
     )
     @GetMapping(value = "/users")
-    public ResponseEntity<UsersResponseDTO> listAllUsers() {
+    public ResponseEntity<UsersResponseDTO> listAllUsers(
+            @Parameter(description = "Rows per page", example = "10")
+            @RequestParam(name = "rowsPerPage") int rowsPerPage,
 
-        return new ResponseEntity<>(UsersResponseDTO.builder().build(), HttpStatus.OK);
+            @Parameter(description = "Search param")
+            @RequestParam(name = "param", required = false) String param) {
+
+        UsersResponseDTO usersResponseDTO = userManagementService.findAllUsers(rowsPerPage, param);
+
+        return new ResponseEntity<>(usersResponseDTO, HttpStatus.OK);
     }
 
 
@@ -56,7 +69,7 @@ public class UserManagementController {
                             description = "Successfully creating a user",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = ErrorData.class),
+                                    schema = @Schema(implementation = UserResponseDTO.class),
                                     examples = {
                                             @ExampleObject(
                                                     name = "Example success response for creating a user",
@@ -75,7 +88,11 @@ public class UserManagementController {
                     ))
             @Valid @RequestBody UserCreateRequestDTO userCreateRequestDTO) {
 
-        return new ResponseEntity<>(UserResponseDTO.builder().build(), HttpStatus.CREATED);
+        User user = ModelUtility.mapDtoToEntity(userCreateRequestDTO, User.class);
+
+        UserResponseDTO userResponseDTO = userManagementService.saveUser(user.getEmail(), user);
+
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -98,10 +115,12 @@ public class UserManagementController {
     @GetMapping(value = "/users/{id}")
     public ResponseEntity<UserResponseDTO> retrieveUser(
 
-            @Parameter(description = "User ID", example = "1232134")
+            @Parameter(description = "User ID", example = "john@gmail.com")
             @PathVariable(name = "id") String id) {
 
-        return new ResponseEntity<>(UserResponseDTO.builder().build(), HttpStatus.OK);
+        UserResponseDTO userResponseDTO = userManagementService.findUser(id);
+
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -134,14 +153,18 @@ public class UserManagementController {
             @Valid
             @RequestBody UserCreateRequestDTO userCreateRequestDTO) {
 
-        return new ResponseEntity<>(UserResponseDTO.builder().build(), HttpStatus.OK);
+        User user = ModelUtility.mapDtoToEntity(userCreateRequestDTO, User.class);
+
+        UserResponseDTO userResponseDTO = userManagementService.updateUser(user.getEmail(), user);
+
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
             summary = "Delete a user",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
+                            responseCode = "204",
                             description = "Successfully deleting a user"
                     )
             }
@@ -152,6 +175,7 @@ public class UserManagementController {
             @PathVariable(name = "id") String id
     ) {
 
+        userManagementService.removeUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -173,9 +197,16 @@ public class UserManagementController {
             }
     )
     @GetMapping(value = "/groups")
-    public ResponseEntity<GroupsResponseDTO> listAllGroups() {
+    public ResponseEntity<GroupsResponseDTO> listAllGroups(
+            @Parameter(description = "Rows per page", example = "10")
+            @RequestParam(name = "rowsPerPage") int rowsPerPage,
 
-        return new ResponseEntity<>(GroupsResponseDTO.builder().build(), HttpStatus.OK);
+            @Parameter(description = "Search param")
+            @RequestParam(name = "param", required = false) String param) {
+
+        GroupsResponseDTO groupsResponseDTO = userManagementService.findAllGroups(rowsPerPage, param);
+
+        return new ResponseEntity<>(groupsResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -205,7 +236,11 @@ public class UserManagementController {
                     ))
             @Valid @RequestBody GroupCreateRequestDTO groupCreateRequestDTO) {
 
-        return new ResponseEntity<>(GroupResponseDTO.builder().build(), HttpStatus.CREATED);
+        Group group = ModelUtility.mapDtoToEntity(groupCreateRequestDTO, Group.class);
+
+        GroupResponseDTO groupResponseDTO = userManagementService.saveGroup(group.getName(), group);
+
+        return new ResponseEntity<>(groupResponseDTO, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -231,7 +266,9 @@ public class UserManagementController {
             @Parameter(description = "Group ID", example = "12")
             @PathVariable(name = "id") String id) {
 
-        return new ResponseEntity<>(GroupResponseDTO.builder().build(), HttpStatus.OK);
+        GroupResponseDTO groupResponseDTO = userManagementService.findGroup(id);
+
+        return new ResponseEntity<>(groupResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -264,7 +301,11 @@ public class UserManagementController {
             @Valid
             @RequestBody GroupCreateRequestDTO groupCreateRequestDTO) {
 
-        return new ResponseEntity<>(GroupResponseDTO.builder().build(), HttpStatus.OK);
+        Group group = ModelUtility.mapDtoToEntity(groupCreateRequestDTO, Group.class);
+
+        GroupResponseDTO groupResponseDTO = userManagementService.updateGroup(null, group);
+
+        return new ResponseEntity<>(groupResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -281,6 +322,8 @@ public class UserManagementController {
             @Parameter(description = "Group ID", example = "12")
             @PathVariable(name = "id") String id
     ) {
+
+        userManagementService.removeGroup(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -303,9 +346,16 @@ public class UserManagementController {
             }
     )
     @GetMapping(value = "/roles")
-    public ResponseEntity<RolesResponseDTO> listAllRoles() {
+    public ResponseEntity<RolesResponseDTO> listAllRoles(
+            @Parameter(description = "Rows per page", example = "10")
+            @RequestParam(name = "rowsPerPage") int rowsPerPage,
 
-        return new ResponseEntity<>(RolesResponseDTO.builder().build(), HttpStatus.OK);
+            @Parameter(description = "Search param")
+            @RequestParam(name = "param", required = false) String param) {
+
+        RolesResponseDTO rolesResponseDTO = userManagementService.findAllRoles(rowsPerPage, param);
+
+        return new ResponseEntity<>(rolesResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -331,11 +381,15 @@ public class UserManagementController {
                     description = "Role to add. Cannot null or empty.",
                     required = true,
                     schema = @Schema(
-                            implementation = UserCreateRequestDTO.class
+                            implementation = RoleCreateRequestDTO.class
                     ))
             @Valid @RequestBody RoleCreateRequestDTO roleCreateRequestDTO) {
 
-        return new ResponseEntity<>(RoleResponseDTO.builder().build(), HttpStatus.CREATED);
+        Role role = ModelUtility.mapDtoToEntity(roleCreateRequestDTO, Role.class);
+
+        RoleResponseDTO rolesResponseDTO = userManagementService.saveRole(role.getName(), role);
+
+        return new ResponseEntity<>(rolesResponseDTO, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -361,7 +415,9 @@ public class UserManagementController {
             @Parameter(description = "Role ID", example = "2")
             @PathVariable(name = "id") String id) {
 
-        return new ResponseEntity<>(RoleResponseDTO.builder().build(), HttpStatus.OK);
+        RoleResponseDTO roleResponseDTO = userManagementService.findRole(id);
+
+        return new ResponseEntity<>(roleResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -394,7 +450,11 @@ public class UserManagementController {
             @Valid
             @RequestBody RoleCreateRequestDTO roleCreateRequestDTO) {
 
-        return new ResponseEntity<>(RoleResponseDTO.builder().build(), HttpStatus.OK);
+        Role role = ModelUtility.mapDtoToEntity(roleCreateRequestDTO, Role.class);
+
+        RoleResponseDTO roleResponseDTO = userManagementService.updateRole(null, role);
+
+        return new ResponseEntity<>(roleResponseDTO, HttpStatus.OK);
     }
 
     @Operation(
@@ -409,8 +469,9 @@ public class UserManagementController {
     @DeleteMapping(value = "/roles/{id}")
     public ResponseEntity<Void> deleteRole(
             @Parameter(description = "Role ID", example = "2")
-            @PathVariable(name = "id") String id
-    ) {
+            @PathVariable(name = "id") String id) {
+
+        userManagementService.removeRole(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

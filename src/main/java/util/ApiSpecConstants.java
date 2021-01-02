@@ -1,6 +1,6 @@
 package util;
 
-public class ApiSpecConstants {
+public final class ApiSpecConstants {
 
     private ApiSpecConstants() {
     }

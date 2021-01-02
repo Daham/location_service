@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GroupResponseDTO {
 
-    private String id;
+    private String _id;
 
     private String name;
 

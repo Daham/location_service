@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserResponseDTO {
 
-    private String id;
+    private String _id;
 
     @JsonProperty("first_name")
     private String firstName;
@@ -22,11 +22,14 @@ public class UserResponseDTO {
     @JsonProperty("last_name")
     private String lastName;
 
-    @JsonProperty("avatar_url")
-    private String avatarUrl;
-
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("password")
+    private String password;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 
     private boolean activated;
 

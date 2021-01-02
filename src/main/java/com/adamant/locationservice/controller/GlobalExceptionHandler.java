@@ -2,15 +2,11 @@ package com.adamant.locationservice.controller;
 
 import com.adamant.locationservice.entity.error_data.ErrorData;
 import com.adamant.locationservice.entity.error_data.ErrorDetail;
-import com.adamant.locationservice.exception.DataLoadingException;
-import com.adamant.locationservice.exception.ResourceNotFoundException;
-import com.adamant.locationservice.exception.UnprocessableEntityException;
-import com.adamant.locationservice.exception.ValidationException;
+import com.adamant.locationservice.exception.*;
 import com.adamant.locationservice.exception.enums.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +49,66 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getErrorData().setLink(informationLink);
         log.error(ex.getMessage(), ex);
         return handleExceptionInternal(ex, ex.getErrorData(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    /**
+     * Handles DataSavingException
+     * <p>This method delegates to {@link #handleExceptionInternal}
+     *
+     * @param ex      the com.adamant.locationservice.exception
+     * @param request the current request
+     * @return a {@code ResponseEntity} instance with HttpStatus of Not Found - 500
+     */
+    @ExceptionHandler(value = {DataSavingException.class})
+    protected ResponseEntity<Object> handleDataSaving(DataSavingException ex, WebRequest request) {
+        ex.getErrorData().setLink(informationLink);
+        log.error(ex.getMessage(), ex);
+        return handleExceptionInternal(ex, ex.getErrorData(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    /**
+     * Handles DataRemovalException
+     * <p>This method delegates to {@link #handleExceptionInternal}
+     *
+     * @param ex      the com.adamant.locationservice.exception
+     * @param request the current request
+     * @return a {@code ResponseEntity} instance with HttpStatus of Not Found - 500
+     */
+    @ExceptionHandler(value = {DataRemovalException.class})
+    protected ResponseEntity<Object> handleDataSaving(DataRemovalException ex, WebRequest request) {
+        ex.getErrorData().setLink(informationLink);
+        log.error(ex.getMessage(), ex);
+        return handleExceptionInternal(ex, ex.getErrorData(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    /**
+     * Handles DataUpdatingException
+     * <p>This method delegates to {@link #handleExceptionInternal}
+     *
+     * @param ex      the com.adamant.locationservice.exception
+     * @param request the current request
+     * @return a {@code ResponseEntity} instance with HttpStatus of Not Found - 500
+     */
+    @ExceptionHandler(value = {DataUpdatingException.class})
+    protected ResponseEntity<Object> handleDataSaving(DataUpdatingException ex, WebRequest request) {
+        ex.getErrorData().setLink(informationLink);
+        log.error(ex.getMessage(), ex);
+        return handleExceptionInternal(ex, ex.getErrorData(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    /**
+     * Handles DataSavingException
+     * <p>This method delegates to {@link #handleExceptionInternal}
+     *
+     * @param ex      the com.adamant.locationservice.exception
+     * @param request the current request
+     * @return a {@code ResponseEntity} instance with HttpStatus of Not Found - 409
+     */
+    @ExceptionHandler(value = {DataConflictException.class})
+    protected ResponseEntity<Object> handleConflict(DataConflictException ex, WebRequest request) {
+        ex.getErrorData().setLink(informationLink);
+        log.error(ex.getMessage(), ex);
+        return handleExceptionInternal(ex, ex.getErrorData(), new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
     /**

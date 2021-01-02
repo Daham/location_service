@@ -2,19 +2,17 @@ package com.adamant.locationservice.entity.user_management;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
-
-    private String id;
+public class User extends CouchDocument {
 
     @JsonProperty("first_name")
     private String firstName;
@@ -22,11 +20,14 @@ public class User {
     @JsonProperty("last_name")
     private String lastName;
 
-    @JsonProperty("avatar_url")
-    private String avatarUrl;
-
     @JsonProperty("email")
     private String email;
+
+    @JsonProperty("password")
+    private String password;
+
+    @JsonProperty("avatar_url")
+    private String avatarUrl;
 
     private boolean activated;
 

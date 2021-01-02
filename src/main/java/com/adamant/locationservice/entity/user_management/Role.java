@@ -2,19 +2,17 @@ package com.adamant.locationservice.entity.user_management;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
-
-    private String id;
+public class Role extends CouchDocument {
 
     private String name;
 

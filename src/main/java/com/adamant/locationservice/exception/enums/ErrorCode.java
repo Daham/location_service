@@ -27,7 +27,10 @@ public enum ErrorCode {
             "Failure due to unprocessable entity"),
     EXTERNAL_SERVICE_ERROR(HttpStatus.SERVICE_UNAVAILABLE.value(),
             "external.service.failure",
-            "External service failure");
+            "External service failure"),
+    CONFLICT(HttpStatus.CONFLICT.value(),
+            "conflict",
+            "Conflict");
 
     private final int code;
     private final String name;

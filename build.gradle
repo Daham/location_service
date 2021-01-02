@@ -39,6 +39,8 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
     compile group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.2'
+    compile group: 'org.lightcouch', name: 'lightcouch', version: '0.2.0'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.7'
 
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
