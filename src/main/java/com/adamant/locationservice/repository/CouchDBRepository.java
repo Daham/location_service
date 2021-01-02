@@ -10,7 +10,8 @@ import org.lightcouch.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Locale;
+
+import static com.adamant.locationservice.util.CouchDocumentConstants.*;
 
 @Repository
 @Slf4j
@@ -86,7 +87,7 @@ public class CouchDBRepository {
         Page<T> page;
 
         try {
-            page = couchDbClient.view("byType/by-type-view")
+            page = couchDbClient.view(FIND_BY_TYPE_VIEW_ID)
                     .key(key)
                     .queryPage(rowsPerPage, param, classType);
         } catch (IndexOutOfBoundsException e) {

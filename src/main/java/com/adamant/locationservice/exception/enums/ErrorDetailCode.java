@@ -3,7 +3,7 @@ package com.adamant.locationservice.exception.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import util.ErrorConstants;
+import com.adamant.locationservice.util.ErrorConstants;
 
 @Getter
 @ToString

@@ -1,4 +1,4 @@
-package util;
+package com.adamant.locationservice.util;
 
 public final class ApiSpecConstants {
 

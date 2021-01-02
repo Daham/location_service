@@ -1,4 +1,4 @@
-package util;
+package com.adamant.locationservice.util;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

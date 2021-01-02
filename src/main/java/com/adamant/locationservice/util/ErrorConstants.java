@@ -1,6 +1,4 @@
-package util;
-
-import lombok.experimental.UtilityClass;
+package com.adamant.locationservice.util;
 
 public final class ErrorConstants {
 

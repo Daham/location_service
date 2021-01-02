@@ -18,8 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import util.ApiSpecConstants;
-import util.ModelUtility;
+import com.adamant.locationservice.util.ApiSpecConstants;
+import com.adamant.locationservice.util.ModelUtility;
 
 import javax.validation.Valid;
 
@@ -148,14 +148,14 @@ public class UserManagementController {
                     description = "User details to update. Cannot null or empty.",
                     required = true,
                     schema = @Schema(
-                            implementation = UserCreateRequestDTO.class
+                            implementation = UserUpdateRequestDTO.class
                     ))
             @Valid
-            @RequestBody UserCreateRequestDTO userCreateRequestDTO) {
+            @RequestBody UserUpdateRequestDTO userUpdateRequestDTO) {
 
-        User user = ModelUtility.mapDtoToEntity(userCreateRequestDTO, User.class);
+        User user = ModelUtility.mapDtoToEntity(userUpdateRequestDTO, User.class);
 
-        UserResponseDTO userResponseDTO = userManagementService.updateUser(user.getEmail(), user);
+        UserResponseDTO userResponseDTO = userManagementService.updateUser(id, user);
 
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
@@ -232,7 +232,7 @@ public class UserManagementController {
                     description = "Group to add. Cannot null or empty.",
                     required = true,
                     schema = @Schema(
-                            implementation = UserCreateRequestDTO.class
+                            implementation = GroupCreateRequestDTO.class
                     ))
             @Valid @RequestBody GroupCreateRequestDTO groupCreateRequestDTO) {
 
@@ -296,14 +296,14 @@ public class UserManagementController {
                     description = "Group details to update. Cannot null or empty.",
                     required = true,
                     schema = @Schema(
-                            implementation = GroupCreateRequestDTO.class
+                            implementation = GroupUpdateRequestDTO.class
                     ))
             @Valid
-            @RequestBody GroupCreateRequestDTO groupCreateRequestDTO) {
+            @RequestBody GroupUpdateRequestDTO groupUpdateRequestDTO) {
 
-        Group group = ModelUtility.mapDtoToEntity(groupCreateRequestDTO, Group.class);
+        Group group = ModelUtility.mapDtoToEntity(groupUpdateRequestDTO, Group.class);
 
-        GroupResponseDTO groupResponseDTO = userManagementService.updateGroup(null, group);
+        GroupResponseDTO groupResponseDTO = userManagementService.updateGroup(id, group);
 
         return new ResponseEntity<>(groupResponseDTO, HttpStatus.OK);
     }
@@ -445,14 +445,14 @@ public class UserManagementController {
                     description = "Role details to update. Cannot null or empty.",
                     required = true,
                     schema = @Schema(
-                            implementation = RoleCreateRequestDTO.class
+                            implementation = RoleUpdateRequestDTO.class
                     ))
             @Valid
-            @RequestBody RoleCreateRequestDTO roleCreateRequestDTO) {
+            @RequestBody RoleUpdateRequestDTO roleUpdateRequestDTO) {
 
-        Role role = ModelUtility.mapDtoToEntity(roleCreateRequestDTO, Role.class);
+        Role role = ModelUtility.mapDtoToEntity(roleUpdateRequestDTO, Role.class);
 
-        RoleResponseDTO roleResponseDTO = userManagementService.updateRole(null, role);
+        RoleResponseDTO roleResponseDTO = userManagementService.updateRole(id, role);
 
         return new ResponseEntity<>(roleResponseDTO, HttpStatus.OK);
     }
