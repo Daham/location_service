@@ -6,6 +6,7 @@ import com.adamant.locationservice.entity.user_management.Group;
 import com.adamant.locationservice.entity.user_management.Role;
 import com.adamant.locationservice.entity.user_management.User;
 import com.adamant.locationservice.service.UserManagementService;
+import com.adamant.locationservice.service.impl.UserManagementServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
