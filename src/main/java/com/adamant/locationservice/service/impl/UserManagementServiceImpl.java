@@ -39,6 +39,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     public UserResponseDTO findUser(String id) {
         User user = couchDBService.find(User.class, id);
 
+        resolveUserRoles(user);
+
         if (ObjectUtils.isEmpty(user)) {
             log.info("No user exists with the id: {}", id);
             throw new ResourceNotFoundException()
@@ -58,6 +60,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     public UsersResponseDTO findAllUsers(int rowsPerPage, String param) {
         CouchDBFindAllResponse<User> response = couchDBService.findAll(User.class, rowsPerPage, param);
 
+        response.getResultList().forEach(this::resolveUserRoles);
 
         return UsersResponseDTO.builder()
                 .isHasNext(response.isHasNext())
@@ -88,8 +91,6 @@ public class UserManagementServiceImpl implements UserManagementService {
 
             user.set_id(id);
             user.setType(User.class.getName().toLowerCase(Locale.ENGLISH));
-
-            resolveUserRoles(user);
 
             boolean isSaveSuccess = couchDBService.save(user);
 
@@ -139,49 +140,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     /**
-     * Resolve user roles when updating (i.e merge roles in the change request with existing roles)
-     * @param user - user
-     * @param existingUser - existing user
-     * @return User
-     */
-    private User resolveUserRoles(User user, User existingUser){
-
-        //Already assigned roles from user
-        Set<String> customRolesFromUser = Set.copyOf(user.getAssignedRoles());
-
-        //Already assigned roles from existing user
-        Set<String> customRolesFromExistingUser = Set.copyOf(existingUser.getAssignedRoles());
-
-        //Inherited roles from assigned groups of user
-        Set<String> inheritedRolesOfUser = new HashSet<>();
-
-        user.getAssignedGroups().forEach((String groupId) -> {
-            List<String> roles = findGroup(groupId).getAssignedRoles();
-            inheritedRolesOfUser.addAll(roles);
-        });
-
-        //Inherited roles from assigned groups of existing user
-        Set<String> inheritedRolesOfExistingUser = new HashSet<>();
-
-        user.getAssignedGroups().forEach((String groupId) -> {
-            List<String> roles = findGroup(groupId).getAssignedRoles();
-            inheritedRolesOfExistingUser.addAll(roles);
-        });
-
-        Set<String> mergedRoleSet = new HashSet<>();
-
-        //Merge assigned roles and roles from assigned groups
-        mergedRoleSet.addAll(customRolesFromUser);
-        mergedRoleSet.addAll(customRolesFromExistingUser);
-        mergedRoleSet.addAll(inheritedRolesOfUser);
-        mergedRoleSet.addAll(inheritedRolesOfExistingUser);
-
-        user.setAssignedRoles(List.copyOf(mergedRoleSet));
-
-        return user;
-    }
-
-    /**
      * Update user
      *
      * @param id   - id
@@ -194,8 +152,6 @@ public class UserManagementServiceImpl implements UserManagementService {
     public UserResponseDTO updateUser(String id, User user) {
 
         User existingUser = couchDBService.find(User.class, id);
-
-        resolveUserRoles(user, existingUser);
 
         if (ObjectUtils.isEmpty(existingUser)) {
             log.info("No user exists with the id: {}", id);
